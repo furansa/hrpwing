@@ -5,7 +5,7 @@ following features:
 
 * HTTP request and response forwarding.
 * HTTP authentication.
-* Logging for monitoring purposes.
+* Logging.
 
 This project is currently a **Work in Progress**.
 
