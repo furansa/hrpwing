@@ -12,13 +12,13 @@ This project is currently a **Work in Progress**.
 ## Building
 
 ```console
-$ go build
+go build
 ```
 
 ## Running
 
 ```console
-$ ./HRPWinG 
+./HRPWinG 
 Listening on port :3000 
 ```
 
@@ -28,6 +28,6 @@ should open.
 ## Testing
 
 ```console
-$ cd tests && go test
+cd tests && go test
 ```
 
