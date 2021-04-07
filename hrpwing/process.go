@@ -1,38 +1,40 @@
 package hrpwing
 
 import (
-    "bytes"
-    "net/http"
-    "net/url"
+	"bytes"
+	"log"
+	"net/http"
+	"net/url"
 )
 
 func (p *Proxy) ProcessRequest(r *http.Request) error {
-    proxyURLRaw := p.BaseURL + r.URL.String()
+	proxyURLRaw := p.BaseURL + r.URL.String()
 
-    proxyURL, err := url.Parse(proxyURLRaw)
+	log.Printf("Proxying request to: %s", proxyURLRaw)
 
-    if err != nil {
-        return err
-    }
+	proxyURL, err := url.Parse(proxyURLRaw)
 
-    r.URL = proxyURL
-    r.Host = proxyURL.Host
-    r.RequestURI = ""
+	if err != nil {
+		return err
+	}
 
-    return nil
+	r.URL = proxyURL
+	r.Host = proxyURL.Host
+	r.RequestURI = ""
+
+	return nil
 }
 
 func CopyResponse(w http.ResponseWriter, resp *http.Response) {
-    var out bytes.Buffer
-    out.ReadFrom(resp.Body)
+	var out bytes.Buffer
+	out.ReadFrom(resp.Body)
 
-    for key, values := range resp.Header {
-        for _, value := range values {
-            w.Header().Add(key, value)
-        }
-    }
+	for key, values := range resp.Header {
+		for _, value := range values {
+			w.Header().Add(key, value)
+		}
+	}
 
-    w.WriteHeader(resp.StatusCode)
-    w.Write(out.Bytes())
+	w.WriteHeader(resp.StatusCode)
+	w.Write(out.Bytes())
 }
-

@@ -1,20 +1,40 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
+	"flag"
+	"log"
+	"net/http"
 
-    "./hrpwing"
+	"./hrpwing"
 )
 
 func main() {
-    p := &hrpwing.Proxy {
-        Client: http.DefaultClient,
-        BaseURL: "https://www.golang.org",
-    }
+	var debugMode = flag.Bool("debug", false, "Outputs debug information")
+	var httpsMode = flag.Bool("https", false, "Uses HTTPS instead of default HTTP")
+	flag.Parse()
 
-    http.Handle("/", p)
-    fmt.Println("Listening on port :3000")
-    err := http.ListenAndServe(":3000", nil)
-    panic(err)
+	p := &hrpwing.Proxy{
+		Client:  http.DefaultClient,
+		BaseURL: "https://www.golang.org",
+	}
+
+	http.Handle("/", p)
+
+	if *httpsMode {
+		if *debugMode {
+			log.Printf("Listening on port :8443, all request will be redirected to %s", p.BaseURL)
+		}
+
+		err := http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil)
+
+		panic(err)
+	} else {
+		if *debugMode {
+			log.Printf("Listening on port :8000, all request will be redirected to %s", p.BaseURL)
+		}
+
+		err := http.ListenAndServe(":8000", nil)
+
+		panic(err)
+	}
 }
